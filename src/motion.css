@@ -1,0 +1,474 @@
+/* ==========================================
+   BUFFERGRID MOTION & POLISH LAYER
+   Import AFTER styles.css (see main.tsx).
+   ========================================== */
+
+/* ---------- Keyframes ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pagein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes orbit-a {
+  from {
+    transform: rotate(-24deg);
+  }
+  to {
+    transform: rotate(336deg);
+  }
+}
+@keyframes orbit-b {
+  from {
+    transform: rotate(38deg);
+  }
+  to {
+    transform: rotate(-322deg);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-0.4deg);
+  }
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 168, 117, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 12px rgba(0, 168, 117, 0);
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+@keyframes glow-drift {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-90px, 50px) scale(1.18);
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Page transition ---------- */
+.page-fade {
+  animation: pagein 0.45s ease both;
+}
+
+/* ---------- Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+}
+.reveal.in {
+  opacity: 1;
+  animation: rise 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: var(--d, 0ms);
+}
+
+/* ---------- Hero entrance ---------- */
+.rise {
+  opacity: 0;
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.hero h1 .rise {
+  display: block;
+}
+
+/* Inner page intros */
+.page-intro .container > *,
+.detail-hero .container > * {
+  animation: rise 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.page-intro .container > :nth-child(2),
+.detail-hero .container > :nth-child(2) {
+  animation-delay: 0.1s;
+}
+.page-intro .container > :nth-child(3),
+.detail-hero .container > :nth-child(3) {
+  animation-delay: 0.2s;
+}
+.detail-hero .container > :nth-child(4) {
+  animation-delay: 0.3s;
+}
+.detail-hero .container > :nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+/* ---------- Hero ambient motion ---------- */
+.pulse-dot {
+  animation: pulse 2s ease-out infinite;
+}
+.orbit-one {
+  animation: orbit-a 34s linear infinite;
+}
+.orbit-two {
+  animation: orbit-b 44s linear infinite;
+}
+.float-card {
+  animation: float 6s ease-in-out infinite;
+}
+.card-stack {
+  animation-delay: -2s;
+}
+.card-zap {
+  animation-delay: -4s;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 168, 117, 0.24), transparent 65%);
+  filter: blur(30px);
+  animation: breathe 8s ease-in-out infinite;
+}
+
+/* ---------- Hero browser showcase ---------- */
+.browser {
+  position: relative;
+  z-index: 2;
+  width: min(440px, 92%);
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(11, 31, 68, 0.18);
+  animation: drift 9s ease-in-out infinite;
+}
+.browser-bar {
+  height: 34px;
+  background: #f1f4f8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border-bottom: 1px solid #e6ebf1;
+}
+.browser-bar i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d5dce6;
+  display: block;
+}
+.browser-bar i:nth-child(1) {
+  background: #ff6b6b;
+}
+.browser-bar i:nth-child(2) {
+  background: #ffc857;
+}
+.browser-bar i:nth-child(3) {
+  background: #3ddc97;
+}
+.browser-url {
+  margin-left: 10px;
+  flex: 1;
+  max-width: 70%;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 10px;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #7b889b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.browser-screen {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #e9eef3;
+}
+.browser-screen img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.browser-screen img.on {
+  opacity: 1;
+}
+
+/* ---------- Marquee (replaces the static hero strip) ---------- */
+.marquee {
+  height: 70px;
+  border-top: 1px solid #e5eaf0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+.marquee-track span {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8f9bac;
+  white-space: nowrap;
+}
+.marquee-track b {
+  margin: 0 30px;
+  color: #00a875;
+  font-weight: 400;
+  font-size: 11px;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  transition:
+    height 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.header-logo {
+  transition: height 0.3s ease;
+}
+.site-header.scrolled {
+  height: 68px;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 8px 30px rgba(11, 31, 68, 0.07);
+}
+.site-header.scrolled .header-logo {
+  height: 50px;
+}
+.scroll-progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #00a875, #00c18a);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+@media (min-width: 681px) {
+  .nav-links > a:not(.nav-cta) {
+    position: relative;
+  }
+  .nav-links > a:not(.nav-cta)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: #00a875;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .nav-links > a:not(.nav-cta):hover::after,
+  .nav-links > a.active::after {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Buttons and links ---------- */
+.btn svg,
+.text-link svg {
+  transition: transform 0.25s ease;
+}
+.btn:hover svg,
+.text-link:hover svg {
+  transform: translateX(3px);
+}
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::after {
+  transform: translateX(120%);
+}
+
+/* ---------- Portfolio: screenshot scrolls on hover ---------- */
+.project-image img,
+.detail-preview img {
+  object-position: top;
+  transition:
+    object-position 6s linear,
+    opacity 0.3s ease;
+}
+.project-card:hover .project-image img {
+  transform: none;
+  object-position: bottom;
+}
+
+/* ---------- Glow behind dark / coloured sections ---------- */
+.glow-section {
+  position: relative;
+  overflow: hidden;
+}
+.glow-section > .container {
+  position: relative;
+  z-index: 1;
+}
+.glow {
+  position: absolute;
+  top: -180px;
+  right: -80px;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 193, 138, 0.35), transparent 65%);
+  animation: glow-drift 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.contact-strip .glow {
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.28),
+    transparent 65%
+  );
+}
+
+/* ---------- Reduced motion: switch everything off, keep content visible ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .rise {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .marquee-track {
+    transform: none;
+  }
+}
+
+/* Hero fixes */
+.browser {
+  width: min(520px, 94%);
+}
+
+.card-code {
+  top: auto;
+  right: auto;
+  bottom: 16%;
+  left: 0;
+}
+.card-stack {
+  top: 28%;
+  bottom: auto;
+  left: auto;
+  right: -2%;
+}
+
+@media (min-width: 901px) {
+  .hero h1 {
+    font-size: clamp(44px, 5vw, 62px);
+  }
+  .hero {
+    min-height: 0;
+  }
+  .hero-inner {
+    min-height: 0;
+    padding-top: 40px;
+    padding-bottom: 24px;
+  }
+  .hero-copy {
+    padding: 0;
+  }
+}
+
+/* Crossfade ghosting fix */
+.browser-screen img {
+  z-index: 1;
+  transition: opacity 0s linear 1s;
+}
+.browser-screen img.on {
+  z-index: 2;
+  transition: opacity 1s ease;
+}
