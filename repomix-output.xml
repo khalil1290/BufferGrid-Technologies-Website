@@ -40,6 +40,15 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
+originals/
+  bluelight-cover.webp
+  bluelight-coverr.webp
+  bluelight-detail.webp
+  imam-globals-cover.webp
+  imam-globals-detail.webp
+  maxbuild-cover.webp
+  maxbuild-coverr.webp
+  maxbuild-detail.webp
 public/
   images/
     projects/
@@ -51,9 +60,10 @@ public/
       maxbuild-cover.webp
       maxbuild-coverr.webp
       maxbuild-detail.webp
-      README.txt
     logo-light.png
     logo.png
+scripts/
+  optimize-images.mjs
 src/
   App.tsx
   data.ts
@@ -76,17 +86,30 @@ vite.config.ts
 <files>
 This section contains the contents of the repository's files.
 
-<file path="public/images/projects/README.txt">
-Add your own website screenshots to this folder using these exact filenames:
-- maxbuild-cover.webp
-- maxbuild-detail.webp
-- bluelight-cover.webp
-- bluelight-detail.webp
-- imam-globals-cover.webp
-- imam-globals-detail.webp
+<file path="scripts/optimize-images.mjs">
+import sharp from "sharp";
+import fs from "node:fs";
+import path from "node:path";
 
-Use real screenshots of the projects. Do not use stock images as project previews.
-Recommended: desktop browser screenshots, cropped neatly, exported as WebP.
+const src = "originals";
+const out = "public/images/projects";
+
+fs.mkdirSync(out, { recursive: true });
+
+for (const file of fs.readdirSync(src)) {
+  if (!/\.(png|jpe?g|webp)$/i.test(file)) continue;
+  const name = path.parse(file).name;
+  const width = name.endsWith("-detail") ? 1100 : 900;
+
+  const info = await sharp(path.join(src, file))
+    .resize({ width, withoutEnlargement: true })
+    .webp({ quality: 72, effort: 5 })
+    .toFile(path.join(out, name + ".webp"));
+
+  console.log(
+    `${file} → ${Math.round(info.size / 1024)} KB (${info.width}x${info.height})`,
+  );
+}
 </file>
 
 <file path="src/App.tsx">
@@ -215,9 +238,7 @@ function Footer() {
           <Link className="footer-mail" to="/contact">
             Tell us what you're building <ArrowUpRight size={15} />
           </Link>
-          <p className="footer-note">
-            Nigeria · Working with clients worldwide
-          </p>
+          <p className="footer-note">Available for remote projects</p>
         </div>
       </div>
       <div className="container footer-bottom">
@@ -312,7 +333,7 @@ function HeroShowcase() {
   const current = projects[active];
   const address = current.url
     ? current.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")
-    : "pre-launch";
+    : current.name;
 
   return (
     <div className="hero-visual" aria-hidden="true">
@@ -388,8 +409,7 @@ function Home() {
         <div className="container hero-inner">
           <div className="hero-copy">
             <div className="hero-kicker rise" style={{ animationDelay: "0s" }}>
-              <span className="pulse-dot" /> WEB DESIGN &amp; DEVELOPMENT ·
-              NIGERIA
+              <span className="pulse-dot" /> WEB DESIGN &amp; DEVELOPMENT
             </div>
             <h1>
               <span className="rise" style={{ animationDelay: ".12s" }}>
@@ -919,8 +939,8 @@ function Contact() {
             </div>
 
             <div className="contact-detail">
-              <span>LOCATION</span>
-              <strong>Nigeria · Worldwide</strong>
+              <span>AVAILABILITY</span>
+              <strong>Remote projects</strong>
             </div>
           </Reveal>
 
@@ -983,7 +1003,7 @@ function Contact() {
                     name="budget"
                     value={form.budget}
                     onChange={update}
-                    placeholder="e.g. ₦500,000 – ₦1,000,000"
+                    placeholder="Your budget range and currency"
                   />
                 </label>
 
@@ -3548,11 +3568,37 @@ h2 em {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1f44" />
-    <meta name="description" content="BufferGrid Technologies builds professional websites and practical digital solutions that help businesses establish their presence, work smarter and grow." />
-    <title>BufferGrid Technologies | Engineering Ideas into Digital Reality</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta
+      name="description"
+      content="BufferGrid Technologies builds professional websites and practical digital solutions that help businesses establish their presence, work smarter and grow."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="BufferGrid Technologies | Websites built to earn trust"
+    />
+    <meta
+      property="og:description"
+      content="Fast, responsive websites and online stores for businesses that want to be taken seriously.    "
+    />
+    <meta property="og:image" content="https://buffergridtech.co.uk/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/projects/maxbuild-cover.webp"
+      fetchpriority="high"
+    />
+    <link rel="icon" href="/favicon.png" />
+    <title>
+      BufferGrid Technologies | Engineering Ideas into Digital Reality
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="root"></div>
@@ -3573,7 +3619,6 @@ h2 em {
     "preview": "vite preview"
   },
   "dependencies": {
-    "@formspree/react": "^3.0.0",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -3585,6 +3630,7 @@ h2 em {
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.16",
     "typescript": "~5.7.2",
     "vite": "^6.0.5"
