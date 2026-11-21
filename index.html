@@ -4,38 +4,98 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1f44" />
+
+    <!-- Primary SEO -->
+    <title>
+      Website Development & Redesign Agency | BufferGrid Technologies
+    </title>
     <meta
       name="description"
-      content="BufferGrid Technologies builds professional websites and practical digital solutions that help businesses establish their presence, work smarter and grow."
+      content="BufferGrid Technologies builds professional, responsive websites and online stores, and provides website redesign and maintenance services for growing businesses."
     />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
-      content="BufferGrid Technologies | Websites built to earn trust"
+      content="BufferGrid Technologies | Professional Website Development"
     />
     <meta
       property="og:description"
-      content="Fast, responsive websites and online stores for businesses that want to be taken seriously.    "
+      content="We build professional websites, redesign outdated ones and help businesses maintain a strong online presence."
     />
+    <meta property="og:url" content="https://buffergridtech.com/" />
     <meta property="og:image" content="https://buffergridtech.com/og.png" />
+    <meta property="og:image:alt" content="BufferGrid Technologies" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="BufferGrid Technologies | Website Development"
+    />
+    <meta
+      name="twitter:description"
+      content="Professional website development, redesign and maintenance for growing businesses."
+    />
+    <meta name="twitter:image" content="https://buffergridtech.com/og.png" />
+
+    <!-- Performance -->
     <link
       rel="preload"
       as="image"
       href="/images/projects/maxbuild-cover.webp"
       fetchpriority="high"
     />
+
     <link rel="icon" href="/favicon.png" />
-    <title>
-      BufferGrid Technologies | Engineering Ideas into Digital Reality
-    </title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://buffergridtech.com/#organization",
+            "name": "BufferGrid Technologies",
+            "url": "https://buffergridtech.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://buffergridtech.com/images/logo.png"
+            },
+            "email": "hello@buffergrid.tech",
+            "description": "BufferGrid Technologies helps businesses establish, improve and expand their digital capabilities through professional websites, e-commerce experiences and custom web applications.",
+            "knowsAbout": [
+              "Website Development",
+              "Website Design",
+              "E-commerce Development",
+              "Website Redesign",
+              "Website Maintenance",
+              "Custom Web Application Development"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://buffergridtech.com/#website",
+            "url": "https://buffergridtech.com/",
+            "name": "BufferGrid Technologies",
+            "publisher": {
+              "@id": "https://buffergridtech.com/#organization"
+            },
+            "inLanguage": "en"
+          }
+        ]
+      }
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

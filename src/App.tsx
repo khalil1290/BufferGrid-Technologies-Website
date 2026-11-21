@@ -1,3 +1,4 @@
+import SEO from "./SEO";
 import { useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -952,11 +953,83 @@ function NotFound() {
   );
 }
 
+const seoPages: Record<string, { title: string; description: string }> = {
+  "/": {
+    title: "Website Development Agency | BufferGrid Technologies",
+    description:
+      "BufferGrid Technologies builds professional websites and online stores, redesigns existing websites and provides web solutions for businesses in Nigeria and worldwide.",
+  },
+
+  "/services": {
+    title: "Website Development, Redesign & Maintenance | BufferGrid",
+    description:
+      "Explore website development, e-commerce, website redesign, maintenance and custom web application services for businesses in Nigeria and internationally.",
+  },
+
+  "/work": {
+    title: "Our Website Development Projects | BufferGrid Technologies",
+    description:
+      "Explore websites and digital projects built by BufferGrid Technologies for businesses, including corporate websites and e-commerce experiences.",
+  },
+
+  "/about": {
+    title: "About BufferGrid Technologies | Our Approach",
+    description:
+      "Meet BufferGrid Technologies, a web development agency helping businesses worldwide build and improve their digital presence.",
+  },
+
+  "/contact": {
+    title: "Contact BufferGrid Technologies | Start a Project",
+    description:
+      "Looking for professional website development, redesign or maintenance? Contact BufferGrid Technologies to discuss your next project.",
+  },
+};
+
+function RouteSEO() {
+  const location = useLocation();
+  const pathname = location.pathname;
+  const projectSlug = pathname.split("/")[2];
+
+  let page = seoPages[pathname];
+
+  if (pathname.startsWith("/work/") && projectSlug) {
+    const project = projects.find((item) => item.slug === projectSlug);
+
+    if (project) {
+      page = {
+        title: `${project.name} Website Project | BufferGrid Technologies`,
+        description: project.summary,
+      };
+    } else {
+      page = {
+        title: "Project Not Found | BufferGrid Technologies",
+        description:
+          "The requested project could not be found. Explore other projects by BufferGrid Technologies.",
+      };
+    }
+  }
+
+  if (!page) {
+    page = {
+      title: "Page Not Found | BufferGrid Technologies",
+      description:
+        "The page you're looking for could not be found. Visit BufferGrid Technologies to explore our services and projects.",
+    };
+  }
+
+  return (
+    <SEO title={page.title} description={page.description} path={pathname} />
+  );
+}
+
 export default function App() {
   const location = useLocation();
+
   return (
     <>
+      <RouteSEO />
       <Header />
+
       <main key={location.pathname} className="page-fade">
         <Routes location={location}>
           <Route path="/" element={<Home />} />
@@ -968,6 +1041,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+
       <Footer />
     </>
   );

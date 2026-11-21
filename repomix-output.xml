@@ -62,6 +62,8 @@ public/
       maxbuild-detail.webp
     logo-light.png
     logo.png
+  robots.txt
+  sitemap.xml
 scripts/
   optimize-images.mjs
 src/
@@ -71,6 +73,7 @@ src/
   motion.css
   Reveal.tsx
   ScrollToTop.tsx
+  SEO.tsx
   styles.css
 index.html
 package.json
@@ -85,6 +88,103 @@ vite.config.ts
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/SEO.tsx">
+import { useEffect } from "react";
+
+type SEOProps = {
+  title: string;
+  description: string;
+  path: string;
+};
+
+export default function SEO({ title, description, path }: SEOProps) {
+  useEffect(() => {
+    const url = `https://buffergridtech.com${path}`;
+
+    document.title = title;
+
+    const updateMeta = (attribute: string, key: string, content: string) => {
+      let element = document.head.querySelector(`meta[${attribute}="${key}"]`);
+
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute(attribute, key);
+        document.head.appendChild(element);
+      }
+
+      element.setAttribute("content", content);
+    };
+
+    updateMeta("name", "description", description);
+
+    updateMeta("property", "og:type", "website");
+    updateMeta("property", "og:title", title);
+    updateMeta("property", "og:description", description);
+    updateMeta("property", "og:url", url);
+    updateMeta("property", "og:image", "https://buffergridtech.com/og.png");
+
+    updateMeta("name", "twitter:card", "summary_large_image");
+    updateMeta("name", "twitter:title", title);
+    updateMeta("name", "twitter:description", description);
+    updateMeta("name", "twitter:image", "https://buffergridtech.com/og.png");
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute("href", url);
+  }, [title, description, path]);
+
+  return null;
+}
+</file>
+
+<file path="public/robots.txt">
+User-agent: *
+Allow: /
+
+Sitemap: https://buffergridtech.com/sitemap.xml
+</file>
+
+<file path="public/sitemap.xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://buffergridtech.com/</loc>
+  </url>
+
+  <url>
+    <loc>https://buffergridtech.com/services</loc>
+  </url>
+
+  <url>
+    <loc>https://buffergridtech.com/work</loc>
+  </url>
+
+  <url>
+    <loc>https://buffergridtech.com/work/max-build</loc>
+  </url>
+
+  <url>
+    <loc>https://buffergridtech.com/work/blue-light</loc>
+  </url>
+
+  <url>
+    <loc>https://buffergridtech.com/about</loc>
+  </url>
+
+  <url>
+    <loc>https://buffergridtech.com/contact</loc>
+  </url>
+
+</urlset>
+</file>
 
 <file path="scripts/optimize-images.mjs">
 import sharp from "sharp";
@@ -113,6 +213,7 @@ for (const file of fs.readdirSync(src)) {
 </file>
 
 <file path="src/App.tsx">
+import SEO from "./SEO";
 import { useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -1067,11 +1168,83 @@ function NotFound() {
   );
 }
 
+const seoPages: Record<string, { title: string; description: string }> = {
+  "/": {
+    title: "Website Development Agency | BufferGrid Technologies",
+    description:
+      "BufferGrid Technologies builds professional websites and online stores, redesigns existing websites and provides web solutions for businesses in Nigeria and worldwide.",
+  },
+
+  "/services": {
+    title: "Website Development, Redesign & Maintenance | BufferGrid",
+    description:
+      "Explore website development, e-commerce, website redesign, maintenance and custom web application services for businesses in Nigeria and internationally.",
+  },
+
+  "/work": {
+    title: "Our Website Development Projects | BufferGrid Technologies",
+    description:
+      "Explore websites and digital projects built by BufferGrid Technologies for businesses, including corporate websites and e-commerce experiences.",
+  },
+
+  "/about": {
+    title: "About BufferGrid Technologies | Our Approach",
+    description:
+      "Meet BufferGrid Technologies, a web development agency helping businesses worldwide build and improve their digital presence.",
+  },
+
+  "/contact": {
+    title: "Contact BufferGrid Technologies | Start a Project",
+    description:
+      "Looking for professional website development, redesign or maintenance? Contact BufferGrid Technologies to discuss your next project.",
+  },
+};
+
+function RouteSEO() {
+  const location = useLocation();
+  const pathname = location.pathname;
+  const projectSlug = pathname.split("/")[2];
+
+  let page = seoPages[pathname];
+
+  if (pathname.startsWith("/work/") && projectSlug) {
+    const project = projects.find((item) => item.slug === projectSlug);
+
+    if (project) {
+      page = {
+        title: `${project.name} Website Project | BufferGrid Technologies`,
+        description: project.summary,
+      };
+    } else {
+      page = {
+        title: "Project Not Found | BufferGrid Technologies",
+        description:
+          "The requested project could not be found. Explore other projects by BufferGrid Technologies.",
+      };
+    }
+  }
+
+  if (!page) {
+    page = {
+      title: "Page Not Found | BufferGrid Technologies",
+      description:
+        "The page you're looking for could not be found. Visit BufferGrid Technologies to explore our services and projects.",
+    };
+  }
+
+  return (
+    <SEO title={page.title} description={page.description} path={pathname} />
+  );
+}
+
 export default function App() {
   const location = useLocation();
+
   return (
     <>
+      <RouteSEO />
       <Header />
+
       <main key={location.pathname} className="page-fade">
         <Routes location={location}>
           <Route path="/" element={<Home />} />
@@ -1083,6 +1256,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+
       <Footer />
     </>
   );
@@ -3561,52 +3735,6 @@ h2 em {
 }
 </file>
 
-<file path="index.html">
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b1f44" />
-    <meta
-      name="description"
-      content="BufferGrid Technologies builds professional websites and practical digital solutions that help businesses establish their presence, work smarter and grow."
-    />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="BufferGrid Technologies | Websites built to earn trust"
-    />
-    <meta
-      property="og:description"
-      content="Fast, responsive websites and online stores for businesses that want to be taken seriously.    "
-    />
-    <meta property="og:image" content="https://buffergridtech.co.uk/og.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link
-      rel="preload"
-      as="image"
-      href="/images/projects/maxbuild-cover.webp"
-      fetchpriority="high"
-    />
-    <link rel="icon" href="/favicon.png" />
-    <title>
-      BufferGrid Technologies | Engineering Ideas into Digital Reality
-    </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
-</file>
-
 <file path="package.json">
 {
   "name": "buffergrid-technologies",
@@ -3743,6 +3871,74 @@ export default {
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 export default defineConfig({ plugins: [react()] })
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1f44" />
+
+    <!-- Primary SEO -->
+    <title>
+      Website Development & Redesign Agency | BufferGrid Technologies
+    </title>
+    <meta
+      name="description"
+      content="BufferGrid Technologies builds professional, responsive websites and online stores, and provides website redesign and maintenance services for growing businesses."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="BufferGrid Technologies | Professional Website Development"
+    />
+    <meta
+      property="og:description"
+      content="We build professional websites, redesign outdated ones and help businesses maintain a strong online presence."
+    />
+    <meta property="og:url" content="https://buffergridtech.com/" />
+    <meta property="og:image" content="https://buffergridtech.com/og.png" />
+    <meta property="og:image:alt" content="BufferGrid Technologies" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="BufferGrid Technologies | Website Development"
+    />
+    <meta
+      name="twitter:description"
+      content="Professional website development, redesign and maintenance for growing businesses."
+    />
+    <meta name="twitter:image" content="https://buffergridtech.com/og.png" />
+
+    <!-- Performance -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/projects/maxbuild-cover.webp"
+      fetchpriority="high"
+    />
+
+    <link rel="icon" href="/favicon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 </file>
 
 </files>
