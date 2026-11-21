@@ -241,6 +241,8 @@ function HeroShowcase() {
               src={p.cover}
               alt=""
               className={i === active ? "on" : ""}
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : "auto"}
             />
           ))}
         </div>
