@@ -209,11 +209,15 @@ function HeroShowcase() {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(
-      () => setActive((n) => (n + 1) % projects.length),
-      3800,
-    );
-    return () => clearInterval(timer);
+    const startTimer = setTimeout(() => {
+      const interval = setInterval(() => {
+        setActive((n) => (n + 1) % projects.length);
+      }, 3800);
+
+      return () => clearInterval(interval);
+    }, 6000);
+
+    return () => clearTimeout(startTimer);
   }, []);
 
   const current = projects[active];
